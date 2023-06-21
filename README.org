@@ -15,6 +15,11 @@
 
 Time zone information for Common Lisp projects compiled from the [[https://www.iana.org/time-zones][IANA time zone database]]
 
+** Disclaimer
+
+The current implementation of this library is incomplete and prone to
+breaking changes. It is not recommended to be used for anything.
+
 ** Legal
 
 - Released under the MIT License
