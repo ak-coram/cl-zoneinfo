@@ -135,10 +135,13 @@
                            (and (+ whitespace) time-of-day))))
   (:destructure (year (&optional w1 month) (&optional w2 day) (&optional w3 time))
     (declare (ignore w1 w2 w3))
-    `(,@(unless (eql year #\-) (list year))
-      ,@(when month (list (text month)))
-      ,@(when day (list day))
-      ,@(when time (list time)))))
+    (unless (eql year #\-)
+      (cons year
+            (when month
+              (cons (text month)
+                    (when day
+                      (cons day
+                            (when time (list time))))))))))
 
 (defrule zone-continuation-line (and (* whitespace)
                                      time-of-day          ; STDOFF
