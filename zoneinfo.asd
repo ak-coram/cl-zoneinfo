@@ -5,8 +5,10 @@
   :author "Ákos Kiss <ak@coram.pub>"
   :license  "MIT License"
   :serial t
-  :depends-on ()
+  :depends-on (#:esrap
+               #:uiop)
   :components ((:file "package")
+               (:file "zoneinfo-parser")
                (:file "zoneinfo"))
   :in-order-to ((test-op (test-op "zoneinfo/test"))))
 
