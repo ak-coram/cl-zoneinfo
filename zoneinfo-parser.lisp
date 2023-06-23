@@ -2,7 +2,7 @@
 
 (in-package #:zoneinfo-parser)
 
-(defrule whitespace (or #\space #\formfeed #\tab #\vt)
+(defrule whitespace (or #\space #\page #\tab #\vt)
   (:constant nil))
 
 (defrule end-of-line (or (and #\linefeed #\return)
