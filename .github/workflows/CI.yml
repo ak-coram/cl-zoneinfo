@@ -30,7 +30,8 @@ jobs:
       QUICKLISP_DIST: ${{ matrix.quicklisp-dist }}
     steps:
       - uses: actions/checkout@v3
-
+        with:
+          submodules: true
       - name: Setup Lisp
         continue-on-error: true
         uses: 40ants/setup-lisp@v2
