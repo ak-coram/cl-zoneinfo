@@ -5,7 +5,8 @@
   :author "Ákos Kiss <ak@coram.pub>"
   :license  "MIT License"
   :serial t
-  :depends-on (#:esrap
+  :depends-on (#:alexandria
+               #:esrap
                #:uiop)
   :components ((:file "package")
                (:file "zoneinfo-parser")

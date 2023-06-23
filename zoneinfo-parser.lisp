@@ -30,9 +30,9 @@
 
 (defrule hours (or integer #\-)
   (:lambda (hours)
-    (cond
-      ((numberp hours) hours)
-      ((string= hours "-") 0))))
+    (list (cond
+            ((numberp hours) hours)
+            ((string= hours "-") 0)))))
 
 (defrule hours-and-minutes (and integer #\: integer)
   (:destructure (hours colon minutes)
@@ -58,10 +58,33 @@
           (list hours (- minutes) (- total-seconds))
           (list hours minutes total-seconds)))))
 
-(defrule time-of-day (or hours-minutes-and-fractional-seconds
-                         hours-minutes-and-seconds
-                         hours-and-minutes
-                         hours))
+(defrule time-of-day (and (or hours-minutes-and-fractional-seconds
+                              hours-minutes-and-seconds
+                              hours-and-minutes
+                              hours)
+                          (? (or #\w #\s #\u #\g #\z)))
+  (:destructure (time type)
+    (cons (alexandria:switch (type :test #'string=)
+            (nil 'local-time)
+            ("w" 'local-time)
+            ("s" 'standard-time)
+            ("u" 'universal-time)
+            ("g" 'universal-time)
+            ("z" 'universal-time))
+          time)))
+
+(defrule save (and (or hours-minutes-and-fractional-seconds
+                       hours-minutes-and-seconds
+                       hours-and-minutes
+                       hours)
+                   (? (or #\s #\d)))
+  (:destructure (time type)
+    (let ((is-zero (every #'zerop time)))
+      (cons (alexandria:switch (type :test #'string=)
+              (nil (if is-zero 'standard-time 'daylight-saving-time))
+              ("s" 'standard-time)
+              ("d" 'daylight-saving-time))
+            time))))
 
 (defrule comment (and (* whitespace) #\# (* (not end-of-line)))
   (:constant nil))
@@ -80,40 +103,42 @@
   (:lambda (result)
     (cond
       ((numberp result) result)
-      ((string= result "only") :only)
-      ((string= result "max") :max)
+      ((string= result "only") 'only)
+      ((string= result "max") 'max)
       (t result))))
 
 (defrule rule-line (and (* whitespace)
                         "Rule"
-                        (+ whitespace) token ; NAME
-                        (+ whitespace) year  ; FROM
-                        (+ whitespace) year  ; TO
-                        (+ whitespace) #\-   ; TYPE (reserved)
-                        (+ whitespace) token ; IN
-                        (+ whitespace) token ; ON
-                        (+ whitespace) token ; AT
-                        (+ whitespace) token ; SAVE
-                        (+ whitespace) token ; LETTER/S
+                        (+ whitespace) token       ; NAME
+                        (+ whitespace) year        ; FROM
+                        (+ whitespace) year        ; TO
+                        (+ whitespace) #\-         ; TYPE (reserved)
+                        (+ whitespace) token       ; IN
+                        (+ whitespace) token       ; ON
+                        (+ whitespace) time-of-day ; AT
+                        (+ whitespace) save        ; SAVE
+                        (+ whitespace) token       ; LETTER/S
                         (* whitespace) (or comment end-of-line))
   (:destructure (w1 rule-token w2 name w3 from w4 to w5 type
                     w6 in w7 on w8 at w9 save w10 letters w11 eol)
     (declare (ignore w1 w2 w3 w4 w5 w6 w7 w8 w9 w10 w11
                      rule-token type eol))
-    (list :rule name from to in on at save letters)))
+    (list 'rule name from to in on at save letters)))
 
 (defrule until (and (or #\- year)
                     (? (or comment
                            (and (+ whitespace) token)))
                     (? (or comment
-                           (and (+ whitespace) token)))
+                           (and (+ whitespace)
+                                (or integer token))))
                     (? (or comment
-                           (and (+ whitespace) token))))
-  (:destructure (year month day time)
-    `(,(unless (eql year #\-) year)
-      ,(when month (text month))
-      ,(when day (text day))
-      ,(when time (text time)))))
+                           (and (+ whitespace) time-of-day))))
+  (:destructure (year (&optional w1 month) (&optional w2 day) (&optional w3 time))
+    (declare (ignore w1 w2 w3))
+    `(,@(unless (eql year #\-) (list year))
+      ,@(when month (list (text month)))
+      ,@(when day (list day))
+      ,@(when time (list time)))))
 
 (defrule zone-continuation-line (and (* whitespace)
                                      time-of-day          ; STDOFF
@@ -123,7 +148,7 @@
                                      (* whitespace) (or comment end-of-line))
   (:destructure (w1 stdoff w2 rules w3 format until w4 eol)
     (declare (ignore w1 w2 w3 w4 eol))
-    (list stdoff rules format until)))
+    (list stdoff rules format (second until))))
 
 (defrule zone-line (and (* whitespace)
                         "Zone"
@@ -131,7 +156,7 @@
                         (+ (or empty-lines comment zone-continuation-line)))
   (:destructure (w1 zone-token w2 name continuations)
     (declare (ignore w1 w2 zone-token))
-    (list :zone name (remove nil continuations))))
+    (list 'zone name (remove nil continuations))))
 
 (defrule link-line (and (* whitespace)
                         "Link"
@@ -142,7 +167,7 @@
                         (* whitespace) (or comment end-of-line))
   (:destructure (w1 link-token w2 target w3 link-name w4 eol)
     (declare (ignore w1 w2 w3 w4 link-token eol))
-    (list :link target link-name)))
+    (list 'link target link-name)))
 
 (defrule line (or empty-lines
                   comment
@@ -154,4 +179,5 @@
 
 (defun parse-zoneinfo (path)
   (remove nil (parse 'file (uiop:read-file-string path))))
+
 
