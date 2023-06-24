@@ -1,5 +1,9 @@
 ;;;; zoneinfo-parser.lisp
 
+(defpackage #:zoneinfo-parser
+  (:use #:cl #:esrap)
+  (:export #:parse-zoneinfo))
+
 (in-package #:zoneinfo-parser)
 
 (defrule whitespace (or #\space #\page #\tab #\vt)
@@ -96,16 +100,12 @@
 
 (defrule token (or quoted-token unquoted-token))
 
-(defrule year (or "only"
-                  "max"
-                  integer
+(defrule year (or integer
                   token)
   (:lambda (result)
     (cond
       ((numberp result) result)
-      ((string= result "only") 'only)
-      ((string= result "max") 'max)
-      (t result))))
+      (t (intern (string-upcase result))))))
 
 (defrule rule-line (and (* whitespace)
                         "Rule"

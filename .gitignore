@@ -1,2 +1,4 @@
 *.fasl
 *.fas
+/zoneinfo-dist/
+make-zoneinfo-dist

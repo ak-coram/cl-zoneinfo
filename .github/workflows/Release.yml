@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+
+jobs:
+ release:
+    name: Build zoneinfo-dist and package for release
+    runs-on: ubuntu-latest
+    env:
+      LISP: sbcl-bin
+      QUICKLISP_DIST: ultralisp
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Setup Lisp
+        continue-on-error: true
+        uses: 40ants/setup-lisp@v2
+        with:
+          qlfile-template: |
+            {% ifequal quicklisp_dist "ultralisp" %}
+            dist ultralisp http://dist.ultralisp.org
+            {% endifequal %}
+
+      - name: Run tests
+        shell: bash
+        run: |
+          ros install neil-lindquist/ci-utils
+          run-fiveam -e t -l zoneinfo/test :zoneinfo
+
+      - name: Build make-zoneinfo-dist
+        shell: bash
+        run: |
+          ros run --eval '(asdf:make :zoneinfo/make-dist)'
+
+      - name: Run make-zoneinfo-dist
+        shell: bash
+        run: |
+          ./make-zoneinfo-dist
+
+      - name: Package release
+        shell: bash
+        run: |
+          mkdir cl-zoneinfo
+          cp LICENSE README.org zoneinfo.asd *.lisp cl-zoneinfo/
+          cp -r zoneinfo-dist cl-zoneinfo/
+          zip -r cl-zoneinfo.zip cl-zoneinfo/
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: cl-zoneinfo
+          path: cl-zoneinfo/
+      
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: cl-zoneinfo.zip
