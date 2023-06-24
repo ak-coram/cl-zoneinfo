@@ -117,6 +117,35 @@
       ("Nov" 11)
       ("Dec" 12))))
 
+(defrule day (or (and "Mon" (? #\d) (? #\a) (? #\y))
+                 (and "Tue" (? #\s) (? #\d) (? #\a) (? #\y))
+                 (and "Wed" (? #\n) (? #\e) (? #\s) (? #\d) (? #\a) (? #\y))
+                 (and "Thu" (? #\r) (? #\s) (? #\d) (? #\a) (? #\y))
+                 (and "Fri" (? #\d) (? #\a) (? #\y))
+                 (and "Sat" (? #\u) (? #\r) (? #\d) (? #\a) (? #\y))
+                 (and "Sun" (? #\d) (? #\a) (? #\y)))
+  (:lambda (result)
+    (alexandria:switch ((car result) :test #'string=)
+      ("Mon" 'monday)
+      ("Tue" 'tuesday)
+      ("Wed" 'wednesday)
+      ("Thu" 'thursday)
+      ("Fri" 'friday)
+      ("Sat" 'saturday)
+      ("Sun" 'sunday))))
+
+(defrule on (or integer
+                (and "last" day)
+                (and day ">=" integer)
+                (and day "<=" integer))
+  (:lambda (result)
+    (cond
+      ((numberp result) result)
+      ((string= (car result) "last") `(last ,(cadr result)))
+      (t (alexandria:switch ((cadr result) :test #'string=)
+           (">=" `(>= ,(car result) ,(caddr result)))
+           ("<=" `(<= ,(car result) ,(caddr result))))))))
+
 (defrule comment (and (* whitespace) #\# (* (not end-of-line)))
   (:constant nil))
 
@@ -141,7 +170,7 @@
                         (+ whitespace) year        ; TO
                         (+ whitespace) #\-         ; TYPE (reserved)
                         (+ whitespace) month       ; IN
-                        (+ whitespace) token       ; ON
+                        (+ whitespace) on          ; ON
                         (+ whitespace) time-of-day ; AT
                         (+ whitespace) save        ; SAVE
                         (+ whitespace) token       ; LETTER/S
@@ -157,7 +186,7 @@
                            (and (+ whitespace) month)))
                     (? (or comment
                            (and (+ whitespace)
-                                (or integer token))))
+                                on)))
                     (? (or comment
                            (and (+ whitespace) time-of-day))))
   (:destructure (year (&optional w1 month) (&optional w2 day) (&optional w3 time))
