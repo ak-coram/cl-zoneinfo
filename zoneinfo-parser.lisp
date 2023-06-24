@@ -90,6 +90,33 @@
               ("d" 'daylight-saving-time))
             time))))
 
+(defrule month (or (and "Jan" (? #\u) (? #\a) (? #\r) (? #\y))
+                   (and "Feb" (? #\r) (? #\u) (? #\a) (? #\r) (? #\y))
+                   (and "Mar" (? #\c) (? #\h))
+                   (and "Apr" (? #\i) (? #\l))
+                   (and "May")
+                   (and "Jun" (? #\e))
+                   (and "Jul" (? #\y))
+                   (and "Aug" (? #\u) (? #\s) (? #\t))
+                   (and "Sep" (? #\t) (? #\e) (? #\m) (? #\b) (? #\e) (? #\r))
+                   (and "Oct" (? #\o) (? #\b) (? #\e) (? #\r))
+                   (and "Nov" (? #\e) (? #\m) (? #\b) (? #\e) (? #\r))
+                   (and "Dec" (? #\e) (? #\m) (? #\b) (? #\e) (? #\r)))
+  (:lambda (result)
+    (alexandria:switch ((car result) :test #'string=)
+      ("Jan" 1)
+      ("Feb" 2)
+      ("Mar" 3)
+      ("Apr" 4)
+      ("May" 5)
+      ("Jun" 6)
+      ("Jul" 7)
+      ("Aug" 8)
+      ("Sep" 9)
+      ("Oct" 10)
+      ("Nov" 11)
+      ("Dec" 12))))
+
 (defrule comment (and (* whitespace) #\# (* (not end-of-line)))
   (:constant nil))
 
@@ -113,7 +140,7 @@
                         (+ whitespace) year        ; FROM
                         (+ whitespace) year        ; TO
                         (+ whitespace) #\-         ; TYPE (reserved)
-                        (+ whitespace) token       ; IN
+                        (+ whitespace) month       ; IN
                         (+ whitespace) token       ; ON
                         (+ whitespace) time-of-day ; AT
                         (+ whitespace) save        ; SAVE
@@ -127,7 +154,7 @@
 
 (defrule until (and (or #\- year)
                     (? (or comment
-                           (and (+ whitespace) token)))
+                           (and (+ whitespace) month)))
                     (? (or comment
                            (and (+ whitespace)
                                 (or integer token))))
@@ -138,7 +165,7 @@
     (unless (eql year #\-)
       (cons year
             (when month
-              (cons (text month)
+              (cons month
                     (when day
                       (cons day
                             (when time (list time))))))))))
