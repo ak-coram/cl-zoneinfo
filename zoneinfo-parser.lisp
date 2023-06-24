@@ -18,11 +18,6 @@
 (defrule empty-lines (+ (and (* whitespace) end-of-line))
   (:constant nil))
 
-(defrule quoted-token (and #\" (* (not #\")) #\")
-  (:destructure (q1 token q2)
-    (declare (ignore q1 q2))
-    (text token)))
-
 (defrule digit (digit-char-p character))
 
 (defrule integer (and (? (or #\+ #\-)) (+ digit))
@@ -148,6 +143,11 @@
 
 (defrule comment (and (* whitespace) #\# (* (not end-of-line)))
   (:constant nil))
+
+(defrule quoted-token (and #\" (* (not #\")) #\")
+  (:destructure (q1 token q2)
+    (declare (ignore q1 q2))
+    (text token)))
 
 (defrule unquoted-token (+ (not (or whitespace
                                     comment
