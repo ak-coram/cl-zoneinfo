@@ -11,8 +11,7 @@
 
 (asdf:defsystem #:zoneinfo/parser
   :depends-on (#:alexandria
-               #:esrap
-               #:uiop)
+               #:esrap)
   :components ((:file "zoneinfo-parser")))
 
 (asdf:defsystem #:zoneinfo/test
