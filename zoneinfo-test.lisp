@@ -10,35 +10,40 @@
 
 ;;; The following cases just test if the parser doesn't crash
 
+(defun parse (name)
+  (let* ((system (asdf:find-system 'zoneinfo t))
+         (path (asdf:system-relative-pathname system (format nil "tz/~a" name))))
+    (zoneinfo-parser:parse-zoneinfo (uiop:read-file-string path))))
+
 (test parse-africa
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/africa")))
+  (finishes (parse "africa")))
 
 (test parse-antarctica
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/antarctica")))
+  (finishes (parse "antarctica")))
 
 (test parse-asia
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/asia")))
+  (finishes (parse "asia")))
 
 (test parse-australasia
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/australasia")))
+  (finishes (parse "australasia")))
 
 (test parse-backward
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/backward")))
+  (finishes (parse "backward")))
 
 (test parse-backzone
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/backzone")))
+  (finishes (parse "backzone")))
 
 (test parse-etcetera
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/etcetera")))
+  (finishes (parse "etcetera")))
 
 (test parse-europe
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/europe")))
+  (finishes (parse "europe")))
 
 (test parse-factory
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/factory")))
+  (finishes (parse "factory")))
 
 (test parse-northamerica
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/northamerica")))
+  (finishes (parse "northamerica")))
 
 (test parse-southamerica
-  (finishes (zoneinfo-parser:parse-zoneinfo "tz/southamerica")))
+  (finishes (parse "southamerica")))
