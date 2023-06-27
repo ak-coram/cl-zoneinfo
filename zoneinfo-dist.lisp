@@ -43,13 +43,17 @@
     (ensure-directories-exist dist-dir)
     (if tag
         (uiop:with-temporary-file (:stream s)
+          (format t "Downloading tz release ~a... " tag)
+          (force-output)
           (let ((bytes (dex:get (get-archive-url tag))))
             (write-sequence bytes s))
+          (format t "DONE~%")
           (zip:with-zipfile (f s)
             (loop :for name :in names
                   :for entry := (zip:get-zipfile-entry
                                  (format nil "tz-~a/~a" tag name) f)
                   :do (format t "Writing ~a~a.lisp... " dist-dir name)
+                  :do (force-output)
                   :do (make-zoneinfo
                        (babel:octets-to-string (zip:zipfile-entry-contents entry)
                                                :encoding :utf-8)
@@ -59,6 +63,7 @@
         (loop :with tz-dir := (asdf:system-relative-pathname system "tz/")
               :for name :in names
               :do (format t "Writing ~a~a.lisp... " dist-dir name)
+              :do (force-output)
               :do (make-zoneinfo (uiop:read-file-string (format nil "~a~a"
                                                                 tz-dir
                                                                 name))
