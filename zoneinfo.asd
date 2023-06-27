@@ -27,7 +27,10 @@
                #:zoneinfo/test))
 
 (asdf:defsystem #:zoneinfo/make-dist
-  :depends-on (#:zoneinfo/parser)
+  :depends-on (#:dexador
+               #:st-json
+               #:zip
+               #:zoneinfo/parser)
   :components ((:file "zoneinfo-dist"))
   :build-operation "program-op"
   :build-pathname "make-zoneinfo-dist"

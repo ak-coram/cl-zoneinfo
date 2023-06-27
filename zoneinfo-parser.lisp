@@ -236,7 +236,5 @@
 
 (defrule file (* line))
 
-(defun parse-zoneinfo (path)
-  (remove nil (parse 'file (uiop:read-file-string path))))
-
-
+(defun parse-zoneinfo (contents)
+  (remove nil (parse 'file contents)))
