@@ -26,12 +26,6 @@ jobs:
             dist ultralisp http://dist.ultralisp.org
             {% endifequal %}
 
-      - name: Run tests
-        shell: bash
-        run: |
-          ros install neil-lindquist/ci-utils
-          run-fiveam -e t -l zoneinfo/test :zoneinfo
-
       - name: Build make-zoneinfo-dist
         shell: bash
         run: |
