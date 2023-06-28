@@ -87,7 +87,7 @@ zoneinfo-dist.
 
 When a zoneinfo-dist is available, the zoneinfo system can be loaded:
 
-#+begin_src sh
+#+begin_src lisp
   (ql:quickload :zoneinfo)
   (zoneinfo:get-info :etcetera)
   ;; =>
