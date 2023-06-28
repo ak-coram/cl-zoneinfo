@@ -5,8 +5,7 @@
   :author "Ákos Kiss <ak@coram.pub>"
   :license  "MIT License"
   :serial t
-  :components ((:file "package")
-               (:file "zoneinfo"))
+  :components ((:file "zoneinfo"))
   :in-order-to ((test-op (test-op "zoneinfo/test"))))
 
 (asdf:defsystem #:zoneinfo/parser
