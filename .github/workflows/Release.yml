@@ -40,7 +40,7 @@ jobs:
         shell: bash
         run: |
           mkdir cl-zoneinfo
-          cp LICENSE README.org zoneinfo.asd *.lisp cl-zoneinfo/
+          cp LICENSE README.org zoneinfo.asd TZ_RELEASE *.lisp cl-zoneinfo/
           cp -r zoneinfo-dist cl-zoneinfo/
           zip -r cl-zoneinfo.zip cl-zoneinfo/
 
