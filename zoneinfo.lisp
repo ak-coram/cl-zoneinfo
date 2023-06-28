@@ -7,9 +7,10 @@
 
 (in-package #:zoneinfo)
 
-(defparameter *zoneinfo-dist-dir*
-  (asdf:system-relative-pathname (asdf:find-system 'zoneinfo t)
-                                 "zoneinfo-dist/"))
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defparameter *zoneinfo-dist-dir*
+    (asdf:system-relative-pathname (asdf:find-system 'zoneinfo t)
+                                   "zoneinfo-dist/")))
 
 (defmacro read-resource (name)
   (with-open-file (stream (uiop:subpathname *zoneinfo-dist-dir* name))
@@ -30,7 +31,7 @@
                                   "factory"
                                   "northamerica"
                                   "southamerica")
-              :for sym := (intern (string-upcase name))
+              :for sym := (intern (string-upcase name) :keyword)
               :collect `(cons (quote ,sym)
                               (read-resource ,(format nil "~a.lisp" name)))))))
 
