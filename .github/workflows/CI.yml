@@ -46,8 +46,7 @@ jobs:
         shell: bash
         run: |
           ros install neil-lindquist/ci-utils
-          ros run --eval '(progn (ql:quickload :zoneinfo/make-dist) (asdf:make :zoneinfo/make-dist))'
-          ./make-zoneinfo-dist
+          ros run --eval '(ql:quickload :zoneinfo/make-dist)' --eval '(progn (zoneinfo-dist:make-dist) (uiop:quit))'
           run-fiveam -e t -l zoneinfo/test :zoneinfo
 
       - name: Run tests (Windows)
@@ -55,6 +54,5 @@ jobs:
         shell: msys2 {0}
         run: |
           ros install neil-lindquist/ci-utils
-          ros run --eval '(progn (ql:quickload :zoneinfo/make-dist) (asdf:make :zoneinfo/make-dist))'
-          ./make-zoneinfo-dist
+          ros run --eval '(ql:quickload :zoneinfo/make-dist)' --eval '(progn (zoneinfo-dist:make-dist) (uiop:quit))'
           run-fiveam -e t -l zoneinfo/test :zoneinfo
