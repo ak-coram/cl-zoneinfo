@@ -46,6 +46,8 @@ jobs:
         shell: bash
         run: |
           ros install neil-lindquist/ci-utils
+          ros run --eval '(asdf:make :zoneinfo/make-dist)'
+          ./make-zoneinfo-dist
           run-fiveam -e t -l zoneinfo/test :zoneinfo
 
       - name: Run tests (Windows)
@@ -53,4 +55,6 @@ jobs:
         shell: msys2 {0}
         run: |
           ros install neil-lindquist/ci-utils
+          ros run --eval '(asdf:make :zoneinfo/make-dist)'
+          ./make-zoneinfo-dist
           run-fiveam -e t -l zoneinfo/test :zoneinfo
