@@ -2,8 +2,31 @@
 
 (defpackage #:zoneinfo
   (:use #:cl)
-  (:export *zoneinfo*
-           get-zoneinfo))
+  (:export *info*
+           get-info
+
+           ;; Symbols for types of time of day
+           universal-time
+           local-time
+           standard-time
+           daylight-saving-time
+
+           ;; Symbols for weekdays
+           monday
+           tuesday
+           wednesday
+           thursday
+           friday
+           saturday
+           sunday
+
+           ;; Misc symbols for zones & rules
+           zone
+           rule
+           only
+           min
+           max
+           last))
 
 (in-package #:zoneinfo)
 
@@ -17,8 +40,8 @@
     (let ((*read-eval* nil))
       `(quote ,(read stream)))))
 
-(defmacro def-zoneinfo ()
-  `(defparameter *zoneinfo*
+(defmacro def-info ()
+  `(defparameter *info*
      (list
       ,@(loop :for name :in (list "africa"
                                   "antarctica"
@@ -35,10 +58,10 @@
               :collect `(cons (quote ,sym)
                               (read-resource ,(format nil "~a.lisp" name)))))))
 
-(def-zoneinfo)
+(def-info)
 
-(defun get-zoneinfo (source)
-  (let ((result (cdr (assoc source *zoneinfo*))))
+(defun get-info (source)
+  (let ((result (cdr (assoc source *info*))))
     (if result
         result
         (error "Unknown source ~a" source))))
