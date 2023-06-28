@@ -21,17 +21,17 @@
   :components ((:file "zoneinfo-test"))
   :perform (test-op (o c) (symbol-call :fiveam '#:run! :zoneinfo)))
 
-(asdf:defsystem #:zoneinfo/*
-  :depends-on (#:zoneinfo
-               #:zoneinfo/parser
-               #:zoneinfo/test))
-
 (asdf:defsystem #:zoneinfo/make-dist
   :depends-on (#:dexador
-               #:st-json
                #:zip
                #:zoneinfo/parser)
   :components ((:file "zoneinfo-dist"))
   :build-operation "program-op"
   :build-pathname "make-zoneinfo-dist"
   :entry-point "zoneinfo-dist:make-dist")
+
+(asdf:defsystem #:zoneinfo/*
+  :depends-on (#:zoneinfo
+               #:zoneinfo/parser
+               #:zoneinfo/test
+               #:zoneinfo/make-dist))

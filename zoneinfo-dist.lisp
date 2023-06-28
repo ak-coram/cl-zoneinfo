@@ -6,9 +6,10 @@
 
 (in-package #:zoneinfo-dist)
 
-(defun get-latest-tz-tag ()
-  (let ((response (dex:get "https://api.github.com/repos/eggert/tz/tags")))
-    (st-json:getjso "name" (car (st-json:read-json response)))))
+(defun get-tz-release-tag (system)
+  (string-trim '(#\linefeed #\return #\space)
+               (uiop:read-file-string
+                (asdf:system-relative-pathname system "TZ_RELEASE"))))
 
 (defun get-archive-url (tag)
   (format nil "https://github.com/eggert/tz/archive/refs/tags/~a.zip" tag))
@@ -28,7 +29,7 @@
            (uiop:file-exists-p
             (asdf:system-relative-pathname system "tz/europe")))
          (tag (when (or force-download (not tz-submodule-available))
-                (get-latest-tz-tag)))
+                (get-tz-release-tag system)))
          (names '("africa"
                   "antarctica"
                   "asia"
