@@ -199,9 +199,11 @@
                       (cons day
                             (when time (list time))))))))))
 
+(defrule rules (or save token))
+
 (defrule zone-continuation-line (and (* whitespace)
                                      time-of-day          ; STDOFF
-                                     (+ whitespace) token ; RULES
+                                     (+ whitespace) rules ; RULES
                                      (+ whitespace) token ; FORMAT
                                      (? (and (+ whitespace) until)) ; UNTIL
                                      (* whitespace) (or comment end-of-line))
