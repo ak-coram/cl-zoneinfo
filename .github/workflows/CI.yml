@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: |
           ros install neil-lindquist/ci-utils
-          ros run --eval '(asdf:make :zoneinfo/make-dist)'
+          ros run --eval '(progn (ql:quickload :zoneinfo/make-dist) (asdf:make :zoneinfo/make-dist))'
           ./make-zoneinfo-dist
           run-fiveam -e t -l zoneinfo/test :zoneinfo
 
@@ -55,6 +55,6 @@ jobs:
         shell: msys2 {0}
         run: |
           ros install neil-lindquist/ci-utils
-          ros run --eval '(asdf:make :zoneinfo/make-dist)'
+          ros run --eval '(progn (ql:quickload :zoneinfo/make-dist) (asdf:make :zoneinfo/make-dist))'
           ./make-zoneinfo-dist
           run-fiveam -e t -l zoneinfo/test :zoneinfo
