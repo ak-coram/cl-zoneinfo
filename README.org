@@ -20,6 +20,108 @@ Time zone information for Common Lisp projects compiled from the [[https://www.i
 The current implementation of this library is incomplete and prone to
 breaking changes. It is not recommended to be used for anything.
 
+** Outline
+
+cl-zoneinfo aims to make the machine-readable information contained in
+the tzdb source files available to Common Lisp programs in a
+convenient format. This is achieved by parsing said source files and
+emitting their contents as simple list forms. The resulting collection
+of Lisp files is referred to as a zoneinfo-dist throughout this
+project.
+
+The zoneinfo-dist compilation process requires facilities for
+obtaining a tzdb release and parsing it. To avoid including these
+dependencies when they are not needed, this project is split into
+multiple systems.
+
+** Obtaining a zoneinfo-dist
+
+*** Release bundles - Ideal for usage
+
+For convenience [[https://github.com/ak-coram/cl-zoneinfo/releases/][releases]] provide source archives including a
+precompiled zoneinfo-dist (usually based on the latest tzdb release at
+the time of the release).
+
+*** Using the Git Submodule - Ideal for development
+
+The https://github.com/eggert/tz repository is included in this
+repository as a submodule. You can use the following command for
+cloning the repository to include it:
+
+#+begin_src sh
+  git clone --recurse-submodules https://github.com/ak-coram/cl-zoneinfo.git
+#+end_src
+
+If the submodule is present, it is used by default for building
+zoneinfo-dists. When this repository is used via quicklisp
+local-projects it is the recommended approach. It is advisable to also
+update the submodule when a new tzdb release is added.
+
+*** Fallback - Ideal for usage (when no bundled zoneinfo-dist is available)
+
+There's a fallback mechanism included for downloading tzdb releases
+from GitHub when the submodule cannot be used. The tzdb release
+version specified in [[https://github.com/ak-coram/cl-zoneinfo/blob/main/TZ_RELEASE][TZ_RELEASE]] is downloaded and used for compiling
+zoneinfo-dist.
+
+*** Compilation
+
+**** Basic
+
+#+begin_src lisp
+  (ql:quickload :zoneinfo/make-dist)
+  (zoneinfo-dist:make-dist)
+
+  ;; Force downloading tzdb release from GitHub
+  (zoneinfo-dist:make-dist t)
+#+end_src
+
+**** Via standalone executable
+
+#+begin_src sh
+  sbcl --eval '(ql:quickload :zoneinfo/make-dist)' --eval '(asdf:make :zoneinfo/make-dist)'
+  ./make-zoneinfo-dist
+#+end_src
+
+** Usage
+
+When a zoneinfo-dist is available, the zoneinfo system can be loaded:
+
+#+begin_src sh
+  (ql:quickload :zoneinfo)
+  (zoneinfo:get-info :etcetera)
+  ;; =>
+  ;; ((ZONEINFO:ZONE "Etc/UTC" (((ZONEINFO:LOCAL-TIME 0) "-" "UTC" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT" (((ZONEINFO:LOCAL-TIME 0) "-" "GMT" NIL)))
+  ;;  (ZONEINFO::LINK "Etc/GMT" "GMT")
+  ;;  (ZONEINFO:ZONE "Etc/GMT-14" (((ZONEINFO:LOCAL-TIME 14) "-" "+14" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-13" (((ZONEINFO:LOCAL-TIME 13) "-" "+13" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-12" (((ZONEINFO:LOCAL-TIME 12) "-" "+12" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-11" (((ZONEINFO:LOCAL-TIME 11) "-" "+11" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-10" (((ZONEINFO:LOCAL-TIME 10) "-" "+10" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-9" (((ZONEINFO:LOCAL-TIME 9) "-" "+09" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-8" (((ZONEINFO:LOCAL-TIME 8) "-" "+08" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-7" (((ZONEINFO:LOCAL-TIME 7) "-" "+07" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-6" (((ZONEINFO:LOCAL-TIME 6) "-" "+06" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-5" (((ZONEINFO:LOCAL-TIME 5) "-" "+05" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-4" (((ZONEINFO:LOCAL-TIME 4) "-" "+04" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-3" (((ZONEINFO:LOCAL-TIME 3) "-" "+03" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-2" (((ZONEINFO:LOCAL-TIME 2) "-" "+02" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT-1" (((ZONEINFO:LOCAL-TIME 1) "-" "+01" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+1" (((ZONEINFO:LOCAL-TIME -1) "-" "-01" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+2" (((ZONEINFO:LOCAL-TIME -2) "-" "-02" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+3" (((ZONEINFO:LOCAL-TIME -3) "-" "-03" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+4" (((ZONEINFO:LOCAL-TIME -4) "-" "-04" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+5" (((ZONEINFO:LOCAL-TIME -5) "-" "-05" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+6" (((ZONEINFO:LOCAL-TIME -6) "-" "-06" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+7" (((ZONEINFO:LOCAL-TIME -7) "-" "-07" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+8" (((ZONEINFO:LOCAL-TIME -8) "-" "-08" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+9" (((ZONEINFO:LOCAL-TIME -9) "-" "-09" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+10" (((ZONEINFO:LOCAL-TIME -10) "-" "-10" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+11" (((ZONEINFO:LOCAL-TIME -11) "-" "-11" NIL)))
+  ;;  (ZONEINFO:ZONE "Etc/GMT+12" (((ZONEINFO:LOCAL-TIME -12) "-" "-12" NIL))))
+#+end_src
+
 ** Legal
 
 - Released under the MIT License
