@@ -2,7 +2,8 @@
 
 (defpackage #:zoneinfo
   (:use #:cl)
-  (:export *info*
+  (:export *tz-release*
+           *info*
            get-info
 
            ;; Symbols for types of time of day
@@ -33,9 +34,14 @@
 (in-package #:zoneinfo)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (defparameter *zoneinfo-dist-dir*
-    (asdf:system-relative-pathname (asdf:find-system 'zoneinfo t)
-                                   "zoneinfo-dist/")))
+  (let* ((system (asdf:find-system 'zoneinfo t))
+         (release-path (asdf:system-relative-pathname system "TZ_RELEASE")))
+    (defparameter *zoneinfo-dist-dir*
+      (asdf:system-relative-pathname system "zoneinfo-dist/"))
+
+    (defparameter *tz-release*
+      (string-trim '(#\linefeed #\return #\space)
+                   (uiop:read-file-string release-path)))))
 
 (defmacro read-resource (name)
   (with-open-file (stream (uiop:subpathname *zoneinfo-dist-dir* name))
