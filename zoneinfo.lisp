@@ -26,7 +26,9 @@
            only
            min
            max
-           last))
+           last
+           >=
+           <=))
 
 (in-package #:zoneinfo)
 
