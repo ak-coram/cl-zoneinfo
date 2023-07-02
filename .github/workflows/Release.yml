@@ -36,6 +36,22 @@ jobs:
         run: |
           ./make-zoneinfo-dist
 
+      - name: Push dist to ultralisp branch
+        uses: stefanzweifel/git-auto-commit-action@v4
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          commit_message: Update dist for ultralisp
+          branch: ultralisp
+          commit_options: '--no-verify'
+          add_options: '-f'
+          file_pattern: 'zoneinfo-dist*'
+          push_options: '--force'
+          skip_dirty_check: true
+          skip_fetch: true
+          skip_checkout: true
+          create_branch: true
+          disable_globbing: false
+
       - name: Package release
         shell: bash
         run: |
