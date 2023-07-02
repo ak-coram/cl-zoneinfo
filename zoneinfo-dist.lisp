@@ -47,7 +47,8 @@
           (format t "Downloading tz release ~a... " tag)
           (force-output)
           (let ((bytes (dex:get (get-archive-url tag))))
-            (write-sequence bytes s))
+            (write-sequence bytes s)
+            (finish-output s))
           (format t "DONE~%")
           (zip:with-zipfile (f s)
             (loop :for name :in names
