@@ -42,6 +42,16 @@ For convenience [[https://github.com/ak-coram/cl-zoneinfo/releases/][releases]] 
 precompiled zoneinfo-dist (usually based on the latest tzdb release at
 the time of the release).
 
+The latest release (including the zoneinfo-dist) is automatically
+force-pushed to the ultralisp branch and is available via [[https://www.quicklisp.org/][Quicklisp]]:
+
+#+begin_src lisp
+  ;; Install the ultralisp distribution if you don't have it already
+  (ql-dist:install-dist "http://dist.ultralisp.org/" :prompt nil)
+  ;; Load cl-zoneinfo
+  (ql:quickload :zoneinfo)
+#+end_src
+
 *** Using the Git Submodule - Ideal for development
 
 The https://github.com/eggert/tz repository is included in this
