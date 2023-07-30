@@ -163,4 +163,5 @@ When a zoneinfo-dist is available, the zoneinfo system can be loaded:
 ** Legal
 
 - Released under the MIT License
+- [[https://developercertificate.org/][Developer Certificate of Origin]]
 - [[https://commons.wikimedia.org/wiki/File:%ED%98%BC%EC%9D%BC%EA%B0%95%EB%A6%AC%EC%97%AD%EB%8C%80%EA%B5%AD%EB%8F%84%EC%A7%80%EB%8F%84_(%EA%B7%9C%EC%9E%A5%EA%B0%81_%EC%86%8C%EC%9E%A5%EB%B3%B8).jpg][Source]] for README photo
