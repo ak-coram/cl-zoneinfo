@@ -8,6 +8,8 @@ jobs:
  release:
     name: Build zoneinfo-dist and package for release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     env:
       LISP: sbcl-bin
       QUICKLISP_DIST: ultralisp
