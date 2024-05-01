@@ -21,7 +21,7 @@ jobs:
 
       - name: Setup Lisp
         continue-on-error: true
-        uses: 40ants/setup-lisp@v2
+        uses: 40ants/setup-lisp@v4
         with:
           qlfile-template: |
             {% ifequal quicklisp_dist "ultralisp" %}
@@ -31,6 +31,8 @@ jobs:
       - name: Build make-zoneinfo-dist
         shell: bash
         run: |
+          ros install neil-lindquist/ci-utils
+          asdf-register-project
           ros run --eval '(progn (ql:quickload :zoneinfo/make-dist) (asdf:make :zoneinfo/make-dist))'
 
       - name: Run make-zoneinfo-dist

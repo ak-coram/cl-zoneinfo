@@ -25,6 +25,8 @@ jobs:
         exclude:
           - os: windows-latest
             lisp: ecl/23.9.9
+          - os: windows-latest
+            lisp: ccl-bin/1.12.2
     env:
       LISP: ${{ matrix.lisp }}
       QUICKLISP_DIST: ${{ matrix.quicklisp-dist }}
@@ -34,7 +36,7 @@ jobs:
           submodules: true
       - name: Setup Lisp
         continue-on-error: true
-        uses: 40ants/setup-lisp@v2
+        uses: 40ants/setup-lisp@v4
         with:
           qlfile-template: |
             {% ifequal quicklisp_dist "ultralisp" %}
@@ -46,6 +48,7 @@ jobs:
         shell: bash
         run: |
           ros install neil-lindquist/ci-utils
+          asdf-register-project
           ros run --eval '(ql:quickload :zoneinfo/make-dist)' --eval '(progn (zoneinfo-dist:make-dist) (uiop:quit))'
           run-fiveam -e t -l zoneinfo/test :zoneinfo
 
@@ -54,5 +57,6 @@ jobs:
         shell: msys2 {0}
         run: |
           ros install neil-lindquist/ci-utils
+          asdf-register-project
           ros run --eval '(ql:quickload :zoneinfo/make-dist)' --eval '(progn (zoneinfo-dist:make-dist) (uiop:quit))'
           run-fiveam -e t -l zoneinfo/test :zoneinfo
