@@ -64,7 +64,7 @@ jobs:
           cp -r zoneinfo-dist cl-zoneinfo/
           zip -r cl-zoneinfo.zip cl-zoneinfo/
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           name: cl-zoneinfo
           path: cl-zoneinfo/
