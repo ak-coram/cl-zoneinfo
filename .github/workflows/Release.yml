@@ -11,11 +11,11 @@ jobs:
     permissions:
       contents: write
     env:
-      LISP: sbcl-bin
+      LISP: sbcl-bin/2.5.10
       QUICKLISP_DIST: ultralisp
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
 
